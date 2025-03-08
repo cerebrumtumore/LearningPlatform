@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using LearningPlatform.DataAccess.Postgres.models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -10,11 +11,15 @@ namespace LearningPlatform.DataAccess.Postgres.Auth
     {
 
 
-        public string CreateToken(Dictionary<string, string> data)
+        public string CreateToken(user user)
         {
-            List<Claim> claims = [];
-            foreach (var pair in data)
-                claims.Add(new Claim(pair.Key, pair.Value));
+            var claims = new List<Claim>
+            {
+                new Claim("fullname", user.FullName),
+                new Claim("id", user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role)
+
+            };
 
             var expires = DateTime.UtcNow.Add(options.Value.Expires);
             var credentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.SecretKey)), "HS256");

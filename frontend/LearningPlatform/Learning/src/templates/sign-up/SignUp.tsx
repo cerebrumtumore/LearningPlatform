@@ -8,15 +8,15 @@ import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { RadioGroup } from '@mui/material';
-import Radio from '@mui/material/Radio';
 import Stack from '@mui/material/Stack';
 import { SyntheticEvent } from 'react';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import AppTheme from './components/shared-theme/AppTheme';
 import ColorModeSelect from './components/shared-theme/ColorModeSelect';
-import { Navigate, redirect, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { AuthService } from '../../services/auth.service';
+import { toast } from 'react-toastify';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -62,11 +62,10 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 
 export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const navigate = useNavigate()
-  const [Username, setUsername] = React.useState('')
+  const [fullname, setfullname] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [email, setEmail] = React.useState('')
-  const [gender, setGender] = React.useState('')
-
+  const [isLogin, setIsLogin] = React.useState<boolean>(false);
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -77,7 +76,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
   const validateInputs = () => {
     const email = document.getElementById('email') as HTMLInputElement;
     const password = document.getElementById('password') as HTMLInputElement;
-    const name = document.getElementById('Username') as HTMLInputElement;
+    const name = document.getElementById('fullname') as HTMLInputElement;
 
     let isValid = true;
 
@@ -116,64 +115,26 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
       e.preventDefault();
       return;
     }
-    const authorOrStudent = gender;
 
-    if(authorOrStudent == "author"){
-      const dataAuthor = {
-        Username,
-        email,
-        password,
-      };
-      try {
-        const response = await fetch('https://localhost:7296/Author', 
-          {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json',},
-            body: JSON.stringify(dataAuthor),
-          }
-        );
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error('Ошибка регистрации:', errorData);
-        } else {
-          console.log('Регистрация успешна!');
-          navigate('/sign-in');
-        }
-      } catch (error) {
-        console.error('Ошибка:', error);
+
+    try {
+      const response = await AuthService.registration({ fullname, email, password, role: "STUDENT"});
+      if(response){
+        toast.success('Successful')
+        navigate('/sign-in')
       }
-    }else if(authorOrStudent == "student"){
-      const dataStudent = {
-        Username,
-        email,
-        password,
-      };
-      try {
-        const response = await fetch('https://localhost:7296/Student', 
-          {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json',},
-            body: JSON.stringify(dataStudent),
-          }
-        );
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error('Ошибка регистрации:', errorData);
-        } else {
-          console.log('Регистрация успешна!');
-          navigate('/sign-in');
-        }
-      } catch (error) {
-        console.error('Ошибка:', error);
-      }
+    } catch (error: any) {
+      console.error('Ошибка:', error);
+      toast.error(error.toString());
     }
+
 
   };
 
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
+      <ColorModeSelect sx={{ position: 'absolute', top: '6rem', right: '3rem' }} />
       <SignUpContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
           <Typography
@@ -189,15 +150,15 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
             sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
           >
             <FormControl>
-              <FormLabel htmlFor="Username">Full name</FormLabel>
+              <FormLabel htmlFor="fullname">Full name</FormLabel>
               <TextField
-                autoComplete="Username"
-                name="Username"
+                autoComplete="fullname"
+                name="fullname"
                 required
                 fullWidth
-                id="Username"
-                placeholder="Username"
-                onChange={e => setUsername(e.target.value)}
+                id="fullname"
+                placeholder="fullname"
+                onChange={e => setfullname(e.target.value)}
                 error={nameError}
                 helperText={nameErrorMessage}
                 color={nameError ? 'error' : 'primary'}
@@ -211,9 +172,9 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 id="email"
                 placeholder="your@email.com"
                 name="email"
-                onChange={e => setEmail(e.target.value)}
                 autoComplete="email"
                 variant="outlined"
+                onChange={e => setEmail(e.target.value)}
                 error={emailError}
                 helperText={emailErrorMessage}
                 color={passwordError ? 'error' : 'primary'}
@@ -237,14 +198,6 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
               />
             </FormControl>
 
-            <FormControl>
-              <FormLabel>Gender</FormLabel>
-              
-              <RadioGroup row aria-labelledby="gender-radio-group" name="gender" onChange={e => setGender(e.target.value)}>
-                <FormControlLabel value="student" control={<Radio />} label="Student" />
-                <FormControlLabel value="author" control={<Radio />} label="Author" />
-              </RadioGroup>
-            </FormControl>
 
               <FormControlLabel
               control={<Checkbox value="allowExtraEmails" color="primary" />}

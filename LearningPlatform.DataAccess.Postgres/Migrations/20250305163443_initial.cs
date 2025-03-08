@@ -12,31 +12,18 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Authors",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Role = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
-                    UserName = table.Column<string>(type: "text", nullable: false),
+                    FullName = table.Column<string>(type: "text", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Authors", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Students",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Email = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Students", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -47,21 +34,21 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    Authorid = table.Column<Guid>(type: "uuid", nullable: false)
+                    UserAuthorid = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Courses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Courses_Authors_Authorid",
-                        column: x => x.Authorid,
-                        principalTable: "Authors",
+                        name: "FK_Courses_Users_UserAuthorid",
+                        column: x => x.UserAuthorid,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "coursestudent",
+                name: "courseuser",
                 columns: table => new
                 {
                     CoursesId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -69,17 +56,17 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_coursestudent", x => new { x.CoursesId, x.StudentsId });
+                    table.PrimaryKey("PK_courseuser", x => new { x.CoursesId, x.StudentsId });
                     table.ForeignKey(
-                        name: "FK_coursestudent_Courses_CoursesId",
+                        name: "FK_courseuser_Courses_CoursesId",
                         column: x => x.CoursesId,
                         principalTable: "Courses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_coursestudent_Students_StudentsId",
+                        name: "FK_courseuser_Users_StudentsId",
                         column: x => x.StudentsId,
-                        principalTable: "Students",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -92,7 +79,8 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     LessonText = table.Column<string>(type: "text", nullable: false),
-                    CourseId = table.Column<Guid>(type: "uuid", nullable: false)
+                    CourseId = table.Column<Guid>(type: "uuid", nullable: false),
+                    userId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -103,41 +91,48 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                         principalTable: "Courses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Lessons_Users_userId",
+                        column: x => x.userId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Courses_Authorid",
+                name: "IX_Courses_UserAuthorid",
                 table: "Courses",
-                column: "Authorid");
+                column: "UserAuthorid");
 
             migrationBuilder.CreateIndex(
-                name: "IX_coursestudent_StudentsId",
-                table: "coursestudent",
+                name: "IX_courseuser_StudentsId",
+                table: "courseuser",
                 column: "StudentsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Lessons_CourseId",
                 table: "Lessons",
                 column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lessons_userId",
+                table: "Lessons",
+                column: "userId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "coursestudent");
+                name: "courseuser");
 
             migrationBuilder.DropTable(
                 name: "Lessons");
 
             migrationBuilder.DropTable(
-                name: "Students");
-
-            migrationBuilder.DropTable(
                 name: "Courses");
 
             migrationBuilder.DropTable(
-                name: "Authors");
+                name: "Users");
         }
     }
 }

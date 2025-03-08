@@ -17,14 +17,13 @@ namespace LearningPlatform.API.Controllers
         {
             return new(ctx.User.FindFirst("id").Value);
         }
-        [HttpPost]
-        [Authorize]
+        [HttpPost("createCourse")]
         public async Task<IActionResult> create([FromBody] createCoursedto dto, LearningDbContext db) 
         {
-            Guid userid = GetIdFromHttpContext(HttpContext);
+
             CourseRepository repo = new CourseRepository(db);
-            await repo.Add(dto, userid);
-            return Ok(repo);
+            await repo.Add(dto);
+            return Ok(dto);
         }
     }
 

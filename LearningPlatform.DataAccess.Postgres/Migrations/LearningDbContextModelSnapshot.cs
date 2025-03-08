@@ -22,36 +22,10 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("LearningPlatform.DataAccess.Postgres.models.Author", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Authors");
-                });
-
             modelBuilder.Entity("LearningPlatform.DataAccess.Postgres.models.course", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("Authorid")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
@@ -65,9 +39,12 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("UserAuthorid")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("Authorid");
+                    b.HasIndex("UserAuthorid");
 
                     b.ToTable("Courses");
                 });
@@ -93,14 +70,19 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("userId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
+                    b.HasIndex("userId");
+
                     b.ToTable("Lessons");
                 });
 
-            modelBuilder.Entity("LearningPlatform.DataAccess.Postgres.models.student", b =>
+            modelBuilder.Entity("LearningPlatform.DataAccess.Postgres.models.user", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,7 +92,7 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -118,12 +100,16 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Students");
+                    b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("coursestudent", b =>
+            modelBuilder.Entity("courseuser", b =>
                 {
                     b.Property<Guid>("CoursesId")
                         .HasColumnType("uuid");
@@ -135,18 +121,18 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
 
                     b.HasIndex("StudentsId");
 
-                    b.ToTable("coursestudent");
+                    b.ToTable("courseuser");
                 });
 
             modelBuilder.Entity("LearningPlatform.DataAccess.Postgres.models.course", b =>
                 {
-                    b.HasOne("LearningPlatform.DataAccess.Postgres.models.Author", "Author")
-                        .WithMany("Courses")
-                        .HasForeignKey("Authorid")
+                    b.HasOne("LearningPlatform.DataAccess.Postgres.models.user", "UserAuthor")
+                        .WithMany("AuthorCourses")
+                        .HasForeignKey("UserAuthorid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Author");
+                    b.Navigation("UserAuthor");
                 });
 
             modelBuilder.Entity("LearningPlatform.DataAccess.Postgres.models.lesson", b =>
@@ -157,10 +143,14 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("LearningPlatform.DataAccess.Postgres.models.user", null)
+                        .WithMany("Lessons")
+                        .HasForeignKey("userId");
+
                     b.Navigation("Course");
                 });
 
-            modelBuilder.Entity("coursestudent", b =>
+            modelBuilder.Entity("courseuser", b =>
                 {
                     b.HasOne("LearningPlatform.DataAccess.Postgres.models.course", null)
                         .WithMany()
@@ -168,20 +158,22 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LearningPlatform.DataAccess.Postgres.models.student", null)
+                    b.HasOne("LearningPlatform.DataAccess.Postgres.models.user", null)
                         .WithMany()
                         .HasForeignKey("StudentsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("LearningPlatform.DataAccess.Postgres.models.Author", b =>
-                {
-                    b.Navigation("Courses");
-                });
-
             modelBuilder.Entity("LearningPlatform.DataAccess.Postgres.models.course", b =>
                 {
+                    b.Navigation("Lessons");
+                });
+
+            modelBuilder.Entity("LearningPlatform.DataAccess.Postgres.models.user", b =>
+                {
+                    b.Navigation("AuthorCourses");
+
                     b.Navigation("Lessons");
                 });
 #pragma warning restore 612, 618

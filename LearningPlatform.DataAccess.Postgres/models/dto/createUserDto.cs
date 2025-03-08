@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace LearningPlatform.DataAccess.Postgres.models.dto;
 
-    public record class createStudentdto(string name, string email, string password);
+   public record class createUserDto(string fullName, string email, string password, string role);
 

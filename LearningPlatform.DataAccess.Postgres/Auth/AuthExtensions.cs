@@ -27,7 +27,6 @@ namespace LearningPlatform.DataAccess.Postgres.Auth
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.SecretKey))
                     };
-
                     o.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = configuration =>
@@ -37,6 +36,7 @@ namespace LearningPlatform.DataAccess.Postgres.Auth
                             return Task.CompletedTask;
                         }
                     };
+
                 });
             return serviceCollection;
         }

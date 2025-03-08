@@ -1,14 +1,15 @@
-import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
-import SignUp from './templates/sign-up/SignUp.tsx'
+import { ToastContainer} from 'react-toastify';
+import { Provider } from 'react-redux'
+import { store } from './store/store.ts'
 
 createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-        <BrowserRouter>
+      <Provider store={store}>
+        
           <App />
-        </BrowserRouter>
-      </React.StrictMode>
+          <ToastContainer position='bottom-left' autoClose={2000}/>
+        
+      </Provider>
 )

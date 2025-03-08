@@ -4,19 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LearningPlatform.DataAccess.Postgres.models.Configurations
 {
-    public class AuthorConfiguration : IEntityTypeConfiguration<Author>
+    public class userConfiguration : IEntityTypeConfiguration<user>
     {
-        public void Configure(EntityTypeBuilder<Author> builder)
+        public void Configure(EntityTypeBuilder<user> builder)
         {
-            builder.HasKey(x => x.Id);
-
+            builder.HasKey(u => u.Id);
             builder
-                .HasMany(a => a.Courses)
-                .WithOne(c => c.Author);
+                .HasMany(u => u.Courses)
+                .WithMany(c => c.Students);
+
         }
     }
 }

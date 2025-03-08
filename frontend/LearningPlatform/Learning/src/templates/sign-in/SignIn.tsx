@@ -14,11 +14,18 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './components/ForgotPassword';
-import { useNavigate } from 'react-router-dom';
+import { isCookie, useNavigate } from 'react-router-dom';
 import { SyntheticEvent } from 'react';
 import AppTheme from '../sign-up/components/shared-theme/AppTheme';
 import ColorModeSelect from '../sign-up/components/shared-theme/ColorModeSelect';
 import { GoogleIcon, FacebookIcon, SitemarkIcon } from './components/CustomIcons';
+import Cookies from "cookies-ts"
+import { AuthService } from '../../services/auth.service';
+import { toast } from 'react-toastify';
+import { useAppDispatch } from '../../store/hooks';
+import { login } from '../../store/user/userSlice';
+import { setTokenToLocalStorage } from '../../helpers/cookiesHelper';
+import { setCookie } from 'typescript-cookie';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -64,6 +71,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const navigate = useNavigate()
+  const [isLogin, setIsLogin] = React.useState<boolean>(false);
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -71,6 +79,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [open, setOpen] = React.useState(false);
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const dispath = useAppDispatch();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -80,19 +89,26 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     setOpen(false);
   };
 
+  interface LoginResponse{
+    token: string;
+  }
+
   const handleSubmit = async (e: SyntheticEvent) => {
       e.preventDefault();
-      await fetch('https://localhost:7296/User/login', 
-        {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json',},
-          credentials: 'include',
-          body: JSON.stringify({
-            email,
-            password
-          }),
-        });
-        navigate('/')
+      try {
+        const response = await AuthService.login({ email, password,});
+              if(response){
+                setTokenToLocalStorage('token', response.token)
+                setCookie('slivki', response.token)
+                dispath(login(response))
+                console.log(response);
+                toast.success('Successful')
+              }
+      } catch (error) {
+        console.error('Login failed:', error);
+      }
+        // console.log(role);
+        
 
   };
 

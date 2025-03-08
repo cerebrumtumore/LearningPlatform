@@ -13,18 +13,15 @@ public class LearningDbContext(DbContextOptions<LearningDbContext> options) :DbC
 {
     public DbSet<course> Courses { get; set; }
     public DbSet<lesson> Lessons { get; set; }
-    public DbSet<student> Students { get; set; }
-    public DbSet<Author> Authors { get; set; }
+    public DbSet<user> Users { get; set; }
 
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-
-        modelBuilder.ApplyConfiguration(new studentConfiguration());
         modelBuilder.ApplyConfiguration(new lessonConfiguraion());
         modelBuilder.ApplyConfiguration(new CourseConfiguration());
-        modelBuilder.ApplyConfiguration(new studentConfiguration());
+        modelBuilder.ApplyConfiguration(new userConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 

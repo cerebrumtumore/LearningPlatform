@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace LearningPlatform.DataAccess.Postgres.models.Configurations
 {
@@ -15,8 +16,8 @@ namespace LearningPlatform.DataAccess.Postgres.models.Configurations
             builder.HasKey(e => e.Id);
 
             builder
-                .HasOne(c => c.Author)
-                .WithMany(c => c.Courses);
+                .HasMany(c => c.Students)
+                .WithMany(u => u.Courses);
 
             builder
                 .HasMany(c => c.Lessons)
@@ -24,8 +25,9 @@ namespace LearningPlatform.DataAccess.Postgres.models.Configurations
                 .HasForeignKey(l => l.CourseId);
 
             builder
-                .HasMany(c => c.Students)
-                .WithMany(s => s.Courses);
+                .HasOne(c => c.UserAuthor)
+                .WithMany(u => u.AuthorCourses)
+                .HasForeignKey(c => c.UserAuthorid);
 
         }
     }

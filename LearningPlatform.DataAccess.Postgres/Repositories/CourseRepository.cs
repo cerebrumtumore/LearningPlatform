@@ -1,4 +1,5 @@
-﻿using LearningPlatform.DataAccess.Postgres.models;
+﻿using LearningPlatform.DataAccess.Postgres.Auth;
+using LearningPlatform.DataAccess.Postgres.models;
 using LearningPlatform.DataAccess.Postgres.models.dto;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,6 @@ namespace LearningPlatform.DataAccess.Postgres.Repositories
             _context = dbContext;
         }
 
-        
 
         public async Task<List<course>> GetCourses()
         {
@@ -39,16 +39,20 @@ namespace LearningPlatform.DataAccess.Postgres.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task Add(createCoursedto dto, Guid userid)
+        public async Task Add(createCoursedto dto)
         {
+            user user = await _context.Users.FirstOrDefaultAsync(c => c.Id == dto.authorId);
+
 
             var courseEntity = new course
             {
                 Id = Guid.NewGuid(),
-                Authorid = userid,
+                UserAuthorid = dto.authorId,
                 Title = dto.title,
-                Description = dto.desc,
-                Price = dto.price
+                Description = dto.description,
+                Price = dto.price,
+                Students = new List<user?> { user },
+                
             };
 
             await _context.AddAsync(courseEntity);

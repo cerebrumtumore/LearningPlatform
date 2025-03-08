@@ -16,10 +16,10 @@ namespace LearningPlatform.DataAccess.Postgres.models
 
         public List<lesson> Lessons { get; set; } = [];
 
-        public Author? Author { get; set; }
+        public user? UserAuthor { get; set; }
 
-        public Guid Authorid { get; set; }
+        public Guid UserAuthorid { get; set; }
 
-        public List<student?> Students { get; set; } = [];
+        public List<user?> Students { get; set; } = [];
     }
 }
