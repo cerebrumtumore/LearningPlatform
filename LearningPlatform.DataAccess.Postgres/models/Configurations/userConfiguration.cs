@@ -14,9 +14,14 @@ namespace LearningPlatform.DataAccess.Postgres.models.Configurations
         public void Configure(EntityTypeBuilder<user> builder)
         {
             builder.HasKey(u => u.Id);
-            builder
-                .HasMany(u => u.Courses)
-                .WithMany(c => c.Students);
+            
+            builder.HasMany(u => u.Courses)
+            .WithMany(c => c.Students)
+            .UsingEntity(j => j.ToTable("CourseStudents"));
+
+            builder.HasMany(u => u.AuthorCourses)
+                .WithOne(c => c.UserAuthor)
+                .HasForeignKey(c => c.UserAuthorid);
 
         }
     }

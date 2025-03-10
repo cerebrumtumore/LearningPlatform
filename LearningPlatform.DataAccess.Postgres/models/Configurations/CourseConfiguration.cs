@@ -19,15 +19,15 @@ namespace LearningPlatform.DataAccess.Postgres.models.Configurations
                 .HasMany(c => c.Students)
                 .WithMany(u => u.Courses);
 
-            builder
-                .HasMany(c => c.Lessons)
+            builder.HasMany(c => c.Lessons)
                 .WithOne(l => l.Course)
-                .HasForeignKey(l => l.CourseId);
+                .HasForeignKey(l => l.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            builder
-                .HasOne(c => c.UserAuthor)
+            builder.HasOne(c => c.UserAuthor)
                 .WithMany(u => u.AuthorCourses)
-                .HasForeignKey(c => c.UserAuthorid);
+                .HasForeignKey(c => c.UserAuthorid)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

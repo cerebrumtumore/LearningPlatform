@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using Azure.Core;
@@ -23,11 +24,40 @@ namespace LearningPlatform.API.Controllers
         public async Task<IActionResult> Login([FromBody] loginDto dto, LearningDbContext db)
         {
             var user = await db.Users
+                .Include(u => u.Courses)
                 .FirstOrDefaultAsync(x => x.Email == dto.email);
 
-            string token = await repo.LoginAsync(dto);
+            
 
-            return Ok(new {user.Email, user.Role, token, user.Id});
+
+            string token = await repo.LoginAsync(dto);
+            var userDto = new shareUserdto
+            (
+                user.Id,
+                token,
+                user.Email,
+                user.Courses.Select(c => new shareCourseDto
+                (
+                    c.Id,
+                    c.Title,
+                    c.UserAuthorid,
+                    c.Price,
+                    c.Description,
+                    c.Lessons.Select(l => new shareLessonDto
+                    (
+                        l.Id,
+                        l.Title,
+                        l.Description,
+                        l.LessonText,
+                        c.Id
+
+                    )).ToList()
+
+                )).ToList(),
+                user.Role
+            );
+            List<course> courses = user.Courses;
+            return Ok(userDto);
         }
 
 
@@ -65,12 +95,14 @@ namespace LearningPlatform.API.Controllers
 
 
         [HttpGet("user")]
-        public IActionResult User()
+        public async Task<IActionResult> User(LearningDbContext db)
         {
+
+            Guid userId = Guid.Empty;
             try
             {
                 string token = null;
-                Guid userId = Guid.Empty;
+                
 
                 if (Request.Headers.ContainsKey("Authorization"))
                 {
@@ -92,8 +124,36 @@ namespace LearningPlatform.API.Controllers
 
                 if (repo.GetAuthorById(userId) != null)
                 {
-                    user user = repo.GetAuthorById(userId);
-                    return Ok(new { user.Email, token, user.Role, user.Id, user.Courses });
+                    var user = await db.Users
+                    .Include(u => u.Courses)
+                    .FirstOrDefaultAsync(x => x.Id == userId);
+
+                    var userDto = new shareUserdto
+                    (
+                        user.Id,
+                        token,
+                        user.Email,
+                        user.Courses.Select(c => new shareCourseDto
+                        (
+                            c.Id,
+                            c.Title,
+                            c.UserAuthorid,
+                            c.Price,
+                            c.Description,
+                            c.Lessons.Select(l => new shareLessonDto
+                            (
+                                l.Id,
+                                l.Title,
+                                l.Description,
+                                l.LessonText,
+                                c.Id
+
+                            )).ToList()
+
+                        )).ToList(),
+                        user.Role
+                    );
+                    return Ok(userDto);
                 }
 
                 return Ok("НЕОК");

@@ -89,10 +89,6 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     setOpen(false);
   };
 
-  interface LoginResponse{
-    token: string;
-  }
-
   const handleSubmit = async (e: SyntheticEvent) => {
       e.preventDefault();
       try {

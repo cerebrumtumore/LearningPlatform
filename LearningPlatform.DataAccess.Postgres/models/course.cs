@@ -10,8 +10,8 @@ namespace LearningPlatform.DataAccess.Postgres.models
     {
 
         public Guid Id { get; set; }
-        public string Title{ get; set; } = String.Empty;
-        public string Description{ get; set; } = String.Empty;
+        public string Title { get; set; } = String.Empty;
+        public string Description { get; set; } = String.Empty;
         public decimal Price { get; set; } = 0;
 
         public List<lesson> Lessons { get; set; } = [];

@@ -10,6 +10,10 @@ import { getTokenFromLocalStorage } from './helpers/cookiesHelper'
 import { AuthService } from './services/auth.service'
 import { login, logout, getCourses} from './store/user/userSlice'
 import { useEffect } from 'react'
+import Blog from './templates/blog/Blog'
+import MainContent from './templates/blog/components/MainContent'
+import InfoCourse from './templates/infoCourse/infoCourse'
+import CreateLesson from './templates/createLesson/createLesson'
 
 function App() {
   const dispath = useAppDispatch()
@@ -21,7 +25,6 @@ function App() {
         console.log(data)
         if(data){
           dispath(login(data))
-          dispath(getCourses(data))
         } else {
           dispath(logout())
         }
@@ -42,6 +45,9 @@ function App() {
     <Router>
       <Header/>
       <Routes>
+          <Route path="/lesson/createLesson/:id" element={<CreateLesson />}/>
+          <Route path="/course/getById/:id" element={<InfoCourse />} />
+          <Route path="/myCourses" element={<Blog />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/createCourse" element={<СreateCourse />} />

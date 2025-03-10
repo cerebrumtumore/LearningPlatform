@@ -5,5 +5,5 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LearningPlatform.DataAccess.Postgres.models.dto;
-    public record class createCoursedto(Guid id, string title, string description, decimal price, Guid authorId);
+    public record class createCoursedto(Guid id, string title, string description, decimal price, user? userAuthor, Guid authorId);
 

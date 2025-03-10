@@ -5,7 +5,7 @@ export interface IUser {
     token: string,
     role: string,
     id: string
-    courses: Array<JSON>
+    courses: Array<ICourse>
 }
 
 
@@ -36,4 +36,28 @@ export interface ICourseCreate {
     description: string | undefined,
     price: string | undefined,
     authorId: string | undefined
+}
+
+export interface ILessonCreate {
+    title: string | undefined,
+    description: string | undefined,
+    lessonText: string | undefined,
+}
+
+
+export interface ICourse {
+    id: string,
+    title: string,
+    authorId: string,
+    price: number,
+    description: string,
+    lessons : Array<ILesson>
+}
+
+export interface ILesson {
+    id: string,
+    title: string,
+    description: string,
+    lessonText: string,
+    courseId: string
 }

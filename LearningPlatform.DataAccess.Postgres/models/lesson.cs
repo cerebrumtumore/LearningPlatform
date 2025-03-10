@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace LearningPlatform.DataAccess.Postgres.models
@@ -15,6 +16,7 @@ namespace LearningPlatform.DataAccess.Postgres.models
 
         public Guid CourseId { get; set; }
 
-        public course? Course { get; set; }
+        [JsonIgnore]
+        public course Course { get; set; }
     }
 }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LearningPlatform.DataAccess.Postgres.Migrations
 {
     [DbContext(typeof(LearningDbContext))]
-    [Migration("20250305163443_initial")]
+    [Migration("20250309205906_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -124,7 +124,7 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
 
                     b.HasIndex("StudentsId");
 
-                    b.ToTable("courseuser");
+                    b.ToTable("CourseStudents", (string)null);
                 });
 
             modelBuilder.Entity("LearningPlatform.DataAccess.Postgres.models.course", b =>
@@ -132,7 +132,7 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                     b.HasOne("LearningPlatform.DataAccess.Postgres.models.user", "UserAuthor")
                         .WithMany("AuthorCourses")
                         .HasForeignKey("UserAuthorid")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("UserAuthor");

@@ -1,4 +1,4 @@
-import { ICourseCreate, IUser, IUserData } from "../types/types";
+import { ICourse, ICourseCreate, ILessonCreate, IUser, IUserData } from "../types/types";
 import { instance } from "./axios.api";
 
 export const courseService = {
@@ -12,6 +12,12 @@ export const courseService = {
         }
     },
     
+    async getCourseById(id: string) : Promise<ICourse>{
+        const { data } = await instance.get<ICourse>('course/getById/?id=' + id);
+        return data;
+    },
+
+
     async getCoursesByUser() : Promise<IUser> {
         try {
             const { data } = await instance.get<IUser>('User/getCourse');
@@ -22,5 +28,25 @@ export const courseService = {
             console.error('Ошибка при создании курса:');
             throw error;
         } 
+    },
+
+    async createLesson(lesson: ILessonCreate, id:any) : Promise<ILessonCreate> {
+        try {
+            const { data } = await instance.post<ILessonCreate>('lesson/createLesson?courseId=' + id, lesson, id);
+            return data;
+        } catch (error) {
+            console.error('Ошибка при создании курса:');
+            throw error;
+        }
+    },
+
+    async removeCourse(id: string) {
+        try{
+            await instance.post<string>('remove?id=' + id, id);
+        } catch (error) {
+            console.error('Ошибка при удалении курса:');
+            throw error;
+        }
     }
+
 }

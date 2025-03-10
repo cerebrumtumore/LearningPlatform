@@ -10,6 +10,7 @@ var configuration = builder.Configuration;
 builder.Services.AddControllers();
 builder.Services.AddScoped<AuthOptions>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<lessonRepository>();
 builder.Services.AddAuth(builder.Configuration);
 builder.Services.Configure<AuthSettings>(builder.Configuration.GetSection("AuthSettings"));
 builder.Services.AddDbContext<LearningDbContext>(options =>

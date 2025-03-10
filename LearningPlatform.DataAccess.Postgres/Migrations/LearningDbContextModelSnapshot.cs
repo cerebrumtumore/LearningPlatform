@@ -121,7 +121,7 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
 
                     b.HasIndex("StudentsId");
 
-                    b.ToTable("courseuser");
+                    b.ToTable("CourseStudents", (string)null);
                 });
 
             modelBuilder.Entity("LearningPlatform.DataAccess.Postgres.models.course", b =>
@@ -129,7 +129,7 @@ namespace LearningPlatform.DataAccess.Postgres.Migrations
                     b.HasOne("LearningPlatform.DataAccess.Postgres.models.user", "UserAuthor")
                         .WithMany("AuthorCourses")
                         .HasForeignKey("UserAuthorid")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("UserAuthor");

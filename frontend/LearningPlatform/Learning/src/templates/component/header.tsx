@@ -20,6 +20,7 @@ import { useAppDispatch } from '../../store/hooks';
 import { logout } from '../../store/user/userSlice';
 import { removeTokenFromLocalStorage } from '../../helpers/cookiesHelper';
 import { toast } from 'react-toastify';
+import Blog from '../blog/Blog';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -139,16 +140,16 @@ function header() {
             LearningPlatform
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', marginLeft:'250px' } }}>
-              {hasRole == "AUTHOR" && (
                 <Button onClick={handleCloseNavMenu} href='/createCourse'
               sx={{ my: 2, color: 'white', display: 'block' }}>
                 Добавить курс
-              </Button>)}
-              <Button onClick={handleCloseNavMenu}
+              </Button>
+              <Button 
               sx={{ my: 2, color: 'white', display: 'block' }}>
                 Посмотреть список курсов
               </Button>
-              <Button onClick={handleCloseNavMenu}
+              <Button
+              href='/myCourses'
               sx={{ my: 2, color: 'white', display: 'block' }}>
                 Мои Курсы
               </Button>
